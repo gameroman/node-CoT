@@ -374,3 +374,36 @@ test('CoTParser.from_geojson - Traditional CoT type is unchanged', async () => {
     assert.equal(geo.raw.event._attributes.type, 'a-h-A-M-F');
     assert.equal(geo.raw.event.detail!.__milicon, undefined);
 });
+
+test('CoTParser.from_geojson - Event Link Attribute survives a round trip', async () => {
+    // Unknown Link attributes are stripped by the InputFeature Value.Clean,
+    // so the custom `event` attribute has to be part of LinkAttributes
+    const geo = await CoTParser.from_geojson({
+        type: 'Feature',
+        properties: {
+            links: [{
+                relation: 'p',
+                type: 'core-event',
+                event: '09efeffb-b248-4c9d-859e-d9be352b19a2',
+                url: 'https://map.example.com/event/09efeffb-b248-4c9d-859e-d9be352b19a2'
+            }]
+        },
+        geometry: {
+            type: 'Point',
+            coordinates: [1.1, 2.2]
+        }
+    });
+
+    assert.deepEqual(geo.raw.event.detail!.link, [{
+        _attributes: {
+            relation: 'p',
+            type: 'core-event',
+            event: '09efeffb-b248-4c9d-859e-d9be352b19a2',
+            url: 'https://map.example.com/event/09efeffb-b248-4c9d-859e-d9be352b19a2'
+        }
+    }]);
+
+    const feat = await CoTParser.to_geojson(CoTParser.from_xml(CoTParser.to_xml(geo)));
+
+    assert.equal(feat.properties.links![0].event, '09efeffb-b248-4c9d-859e-d9be352b19a2');
+});

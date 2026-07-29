@@ -52,6 +52,11 @@ export const LinkAttributes = Type.Object({
     // Custom CloudTAK Attribute to open a Mission when clicked - Should always be a GUID
     mission: Type.Optional(Type.String()),
 
+    // Custom CloudTAK Attribute marking the CoT as the projection of a richer
+    // CloudTAK Core Event - present on a `p` (parent) relation Link alongside
+    // the url of the Event - Should always be a GUID
+    event: Type.Optional(Type.String()),
+
     // URL Style Links
     url: Type.Optional(Type.String()),
     mime: Type.Optional(Type.String()),
