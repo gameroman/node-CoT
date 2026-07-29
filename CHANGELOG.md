@@ -12,6 +12,8 @@
 
 ### Pending Fixed
 
+### v14.49.0 - 2025-07-29
+
 - :tada: Add `event` Link Attribute for marking a CoT as the projection of a CloudTAK Core Event
 
 ### v14.48.0 - 2025-07-23
