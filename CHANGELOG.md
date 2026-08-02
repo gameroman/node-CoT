@@ -12,6 +12,10 @@
 
 ### Pending Fixed
 
+### v14.50.0 - 2025-08-01
+
+- :bug: MilIcon augmentation no longer clobbers an existing `__milicon` detail with the generic SIDC derived from the CoT type
+
 ### v14.49.0 - 2025-07-29
 
 - :tada: Add `event` Link Attribute for marking a CoT as the projection of a CloudTAK Core Event
