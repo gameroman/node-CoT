@@ -12,6 +12,8 @@
 
 ### Pending Fixed
 
+### v14.51.0 - 2025-08-05
+
 - :bug: The SIDC is now emitted on both the `__milsym` & `__milicon` details - the takkernel `MilSymDetailHandler` registers `__milsym` only, while newer clients read `__milicon` (ATAK-20119), so MIL-STD symbols previously failed to render depending on the receiving client's version
 - :tada: Add `Type2525.cotTypeFromNumericSIDC()` - returns the most specific CoT Type a numeric SIDC can express (`a-f-G-U-C-I` instead of `a-f-G`), preserving the Type derived icon fallback for clients that can't resolve the SIDC. A numeric SIDC on the GeoJSON `type` property now uses it
 - :bug: `Type2525.to2525D()` short codes (types with no Function ID) declared an undefined `12` SIDC Version field, which clients can't map to a symbology provider - they now declare `10` (2525D) like converted codes do
