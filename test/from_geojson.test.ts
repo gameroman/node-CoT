@@ -323,7 +323,12 @@ test('CoTParser.from_geojson - 2525D/E SIDC as type', async () => {
     if (!geo.raw.event.detail) {
         assert.fail('No Detail Section');
     } else {
+        // The SIDC is mirrored into both details as Clients differ on which one they read
         assert.deepEqual(geo.raw.event.detail.__milicon, {
+            _attributes: { id: '13061500000000000000' }
+        });
+
+        assert.deepEqual(geo.raw.event.detail.__milsym, {
             _attributes: { id: '13061500000000000000' }
         });
     }
@@ -331,6 +336,44 @@ test('CoTParser.from_geojson - 2525D/E SIDC as type', async () => {
     const feat = await CoTParser.to_geojson(geo);
     assert.equal(feat.properties.type, 'a-h-G');
     assert.deepEqual(feat.properties.milicon, { id: '13061500000000000000' });
+    assert.deepEqual(feat.properties.milsym, { id: '13061500000000000000' });
+});
+
+test('CoTParser.from_geojson - 2525D/E SIDC as type retains the Function ID', async () => {
+    const geo = await CoTParser.from_geojson({
+        type: 'Feature',
+        properties: {
+            // 2525D - Friend Land Unit Infantry
+            type: '10031000001211000000'
+        },
+        geometry: {
+            type: 'Point',
+            coordinates: [1.1, 2.2]
+        }
+    });
+
+    // Clients that can't resolve the SIDC fall back to the CoT Type for their
+    // icon, so the type must stay as specific as the SIDC allows
+    assert.equal(geo.raw.event._attributes.type, 'a-f-G-U-C-I');
+});
+
+test('CoTParser.from_geojson - 2525E only symbol falls back to a basic CoT type', async () => {
+    const geo = await CoTParser.from_geojson({
+        type: 'Feature',
+        properties: {
+            // 2525E - Friend Vandalism/Loot/Ransack/Plunder (no 2525B equivalent)
+            type: '13034000001101140000'
+        },
+        geometry: {
+            type: 'Point',
+            coordinates: [1.1, 2.2]
+        }
+    });
+
+    assert.equal(geo.raw.event._attributes.type, 'a-f-G');
+    assert.deepEqual(geo.raw.event.detail!.__milsym, {
+        _attributes: { id: '13034000001101140000' }
+    });
 });
 
 test('CoTParser.from_geojson - SIDC type does not clobber explicit milicon', async () => {
@@ -348,12 +391,16 @@ test('CoTParser.from_geojson - SIDC type does not clobber explicit milicon', asy
         }
     });
 
-    assert.equal(geo.raw.event._attributes.type, 'a-f-G');
+    assert.equal(geo.raw.event._attributes.type, 'a-f-G-U-C-I');
 
     if (!geo.raw.event.detail) {
         assert.fail('No Detail Section');
     } else {
         assert.deepEqual(geo.raw.event.detail.__milicon, {
+            _attributes: { id: '10031000001211000001' }
+        });
+
+        assert.deepEqual(geo.raw.event.detail.__milsym, {
             _attributes: { id: '10031000001211000001' }
         });
     }
@@ -373,6 +420,7 @@ test('CoTParser.from_geojson - Traditional CoT type is unchanged', async () => {
 
     assert.equal(geo.raw.event._attributes.type, 'a-h-A-M-F');
     assert.equal(geo.raw.event.detail!.__milicon, undefined);
+    assert.equal(geo.raw.event.detail!.__milsym, undefined);
 });
 
 test('CoTParser.from_geojson - Event Link Attribute survives a round trip', async () => {

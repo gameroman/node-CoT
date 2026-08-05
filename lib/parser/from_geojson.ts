@@ -51,7 +51,7 @@ export async function from_geojson(
             };
         }
 
-        feature.properties.type = Type2525.fromNumericSIDC(feature.properties.type);
+        feature.properties.type = Type2525.cotTypeFromNumericSIDC(feature.properties.type);
     }
 
     const cot: Static<typeof JSONCoT> = {
@@ -195,12 +195,19 @@ export async function from_geojson(
         cot.event.detail.__geofence = { _attributes: { ...feature.properties.geofence } };
     }
 
-    if (feature.properties.milsym) {
-        cot.event.detail.__milsym = { _attributes: { id: feature.properties.milsym.id } };
+    // Clients disagree on which detail carries the SIDC - the takkernel
+    // MilSymDetailHandler registers `__milsym` only, while newer clients read
+    // `__milicon` (ATAK-20119). Emit both, as TAKX itself does, so the symbol
+    // resolves regardless of the receiving client's version
+    const milsymId = feature.properties.milsym?.id ?? feature.properties.milicon?.id;
+    const miliconId = feature.properties.milicon?.id ?? feature.properties.milsym?.id;
+
+    if (milsymId) {
+        cot.event.detail.__milsym = { _attributes: { id: milsymId } };
     }
 
-    if (feature.properties.milicon) {
-        cot.event.detail.__milicon = { _attributes: { id: feature.properties.milicon.id } };
+    if (miliconId) {
+        cot.event.detail.__milicon = { _attributes: { id: miliconId } };
     }
 
     if (feature.properties.sensor) {

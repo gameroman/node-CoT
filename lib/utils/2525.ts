@@ -1,4 +1,14 @@
-import { convertLetterSidc2NumberSidc } from "@orbat-mapper/convert-symbology";
+import { convertLetterSidc2NumberSidc, convertNumberSidc2LetterSidc } from "@orbat-mapper/convert-symbology";
+
+/**
+ * Digits 1-2 of a numeric SIDC are the Version field - "10" is 2525D
+ *
+ * TAK Clients dispatch to a symbology provider based on this field
+ * (10 => APP6-D, 11 => 2525D, 13 => 2525E, 15 => 2525E Ch1) and fall back to
+ * 2525C - where a numeric SIDC is never a valid symbol - when the version is
+ * unknown to them, resulting in no symbol being rendered at all
+ */
+export const VERSION_2525D = '10';
 
 export enum Domain {
     ATOM = 'a',
@@ -153,7 +163,7 @@ export default class Type2525 {
             const DIM = str_sidc[2].toUpperCase()
             const STS = str_sidc[3].toUpperCase()
 
-            return '12' + SID_MAP[AFF] + DIM_MAP[DIM] + STATUS_MAP[STS] + '0000000000000';
+            return VERSION_2525D + SID_MAP[AFF] + DIM_MAP[DIM] + STATUS_MAP[STS] + '0000000000000';
         } else {
             const convert = convertLetterSidc2NumberSidc(str_sidc);
 
@@ -214,6 +224,41 @@ export default class Type2525 {
         const dimension = SYMBOL_SET_DIM_MAP[sidc.substring(4, 6)] || 'G';
 
         return `a-${affiliation}-${dimension}`;
+    }
+
+    /**
+     * Given a numeric SIDC (2525D/2525E), return the most specific CoT Atom Type
+     * that can be derived from it, falling back to the basic
+     * `a-<affiliation>-<battle dimension>` type from {@link fromNumericSIDC}
+     * when the symbol has no warfighting (2525B) equivalent
+     *
+     * Clients that can't resolve the SIDC itself - either because they predate
+     * the given 2525 variant or because the detail carrying it was dropped -
+     * derive their icon from the CoT Type, so retaining the Function ID is what
+     * keeps a meaningful fallback icon on those clients
+     *
+     * @param sidc - Numeric SIDC to convert
+     */
+    static cotTypeFromNumericSIDC(sidc: string): string {
+        const basic = this.fromNumericSIDC(sidc);
+
+        try {
+            const convert = convertNumberSidc2LetterSidc(sidc);
+
+            if (convert.success && this.isTypeConvertable(convert.sidc)) {
+                const type = this.from2525B(convert.sidc);
+
+                // Only prefer the converted Type when it agrees with the basic Type on
+                // affiliation & battle dimension - the 2525B tables can't express every
+                // numeric identity (exercise & simulation identities in particular all
+                // collapse to Friend when converted back)
+                if (type.startsWith(`${basic}-`)) return type;
+            }
+        } catch {
+            // No 2525B equivalent - fall back to the basic Type
+        }
+
+        return basic;
     }
 
     /**

@@ -24,7 +24,7 @@ test('MilIcon Augmentation - a-n-G', () => {
     });
 
     assert.deepEqual(cot.raw.event.detail!.__milicon, {
-        _attributes: { id: '12041000000000000000' },
+        _attributes: { id: '10041000000000000000' },
     });
 });
 
@@ -51,7 +51,7 @@ test('MilIcon Augmentation - a-U-G', () => {
     });
 
     assert.deepEqual(cot.raw.event.detail!.__milicon, {
-        _attributes: { id: '12011000000000000000' },
+        _attributes: { id: '10011000000000000000' },
     });
 });
 
@@ -79,11 +79,11 @@ test('MilIcon Augmentation - to_geojson normalize2525', async () => {
     // Defaults to false for backwards compatability
     const feat = await CoTParser.to_geojson(cot);
     assert.equal(feat.properties.type, 'a-n-G');
-    assert.deepEqual(feat.properties.milicon, { id: '12041000000000000000' });
+    assert.deepEqual(feat.properties.milicon, { id: '10041000000000000000' });
 
     const normalized = await CoTParser.to_geojson(cot, { normalize2525: true });
-    assert.equal(normalized.properties.type, '12041000000000000000');
-    assert.deepEqual(normalized.properties.milicon, { id: '12041000000000000000' });
+    assert.equal(normalized.properties.type, '10041000000000000000');
+    assert.deepEqual(normalized.properties.milicon, { id: '10041000000000000000' });
 });
 
 test('MilSym Augmentation - a-f-G-E-V-C', () => {
