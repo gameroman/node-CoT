@@ -12,6 +12,11 @@
 
 ### Pending Fixed
 
+### v14.52.0 - 2025-08-11
+
+- :tada: Add `CoTParser.from_xml_document()` for parsing multi-event XML documents (ie: the TAK Server Mission API CoT endpoint) - each event is parsed & validated individually and returned in `cots`, with unparseable events collected in `invalid` as `{ error, event }` (the raw unmutated xml-js event) so a single poisoned CoT doesn't prevent valid CoTs from being returned
+- :white_check_mark: `from_xml_document` coverage: mixed valid/poisoned documents, ordering, bare `<event>` root, XML declaration, boolean attr normalization, pristine invalid events, Flow-Tag absence & GeoJSON conversion of parsed CoTs
+
 ### v14.51.0 - 2025-08-05
 
 - :bug: The SIDC is now emitted on both the `__milsym` & `__milicon` details - the takkernel `MilSymDetailHandler` registers `__milsym` only, while newer clients read `__milicon` (ATAK-20119), so MIL-STD symbols previously failed to render depending on the receiving client's version

@@ -42,6 +42,11 @@ export interface SerializerOptions {
     resetFlow: boolean
 }
 
+export interface CoTParseError {
+    error: string;
+    event: unknown;
+}
+
 function resetFlowTags(cot: CoT): void {
     const flowTags = cot.raw.event.detail?.['_flow-tags_'];
 
@@ -178,6 +183,54 @@ export class CoTParser {
         );
 
         return this.validate(cot);
+    }
+
+    static from_xml_document(
+        raw: Buffer | string,
+        opts: CoTOptions = {}
+    ): {
+        cots: CoT[];
+        invalid: CoTParseError[];
+    } {
+        const str = String(raw);
+
+        let parsed: any;
+        try {
+            parsed = xml2js(str, { compact: true }) as Record<string, unknown>;
+        } catch (err) {
+            console.error(`Failed to parse CoT XML Document: ${str}`);
+            throw err;
+        }
+
+        normalizeBooleanAttributeValues(parsed);
+
+        let events: unknown[] = [];
+        if (parsed && typeof parsed === 'object') {
+            if (parsed.events && parsed.events.event) {
+                events = Array.isArray(parsed.events.event) ? parsed.events.event : [parsed.events.event];
+            } else if (parsed.event) {
+                events = Array.isArray(parsed.event) ? parsed.event : [parsed.event];
+            }
+        }
+
+        const cots: CoT[] = [];
+        const invalid: CoTParseError[] = [];
+
+        for (const event of events) {
+            try {
+                cots.push(this.validate(
+                    new CoT({ event: structuredClone(event) } as Static<typeof JSONCoT>, opts),
+                    { flow: false }
+                ));
+            } catch (err) {
+                invalid.push({
+                    error: err instanceof Error ? err.message : String(err),
+                    event
+                });
+            }
+        }
+
+        return { cots, invalid };
     }
 
     static to_xml(
