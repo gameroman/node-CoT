@@ -4,9 +4,10 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 
 test(`DataPackage CoT Parsing: CameraCOTs.zip`, async () => {
-    const pkg = await DataPackage.parse(new URL('./packages/CameraCOTs.zip', import.meta.url).pathname, {
+    const pkg = await DataPackage.parse(fileURLToPath(new URL('./packages/CameraCOTs.zip', import.meta.url)), {
         cleanup: false
     });
 
@@ -37,7 +38,7 @@ test(`DataPackage CoT Parsing: CameraCOTs.zip`, async () => {
 });
 
 test(`DataPackage CoT Parsing: GrandJunctionAOI.zip`, async () => {
-    const pkg = await DataPackage.parse(new URL('./packages/GrandJunctionAOI.zip', import.meta.url).pathname, {
+    const pkg = await DataPackage.parse(fileURLToPath(new URL('./packages/GrandJunctionAOI.zip', import.meta.url)), {
         cleanup: false
     });
 
@@ -86,7 +87,7 @@ test(`DataPackage CoT Parsing: Buffer Input`, async () => {
 
 test(`DataPackage File Parsing: Readable Input`, async () => {
     const pkg = await DataPackage.parse(
-        fs.createReadStream(new URL('./packages/Iconset-FalconView.zip', import.meta.url).pathname),
+        fs.createReadStream(fileURLToPath(new URL('./packages/Iconset-FalconView.zip', import.meta.url))),
         {
             strict: false,
             name: 'Iconset-FalconView.zip'
@@ -206,11 +207,11 @@ test(`DataPackage CoT Writing`, async () => {
 });
 
 test(`DataPackage CoT Parsing: QuickPic.zip`, async () => {
-    const pkg = await DataPackage.parse(new URL('./packages/QuickPic.zip', import.meta.url).pathname, {
+    const pkg = await DataPackage.parse(fileURLToPath(new URL('./packages/QuickPic.zip', import.meta.url)), {
         cleanup: false
     });
 
-    assert.equal(await DataPackage.hash(new URL('./packages/QuickPic.zip', import.meta.url).pathname), 'bd13db0f18ccb423833cc21c0678e0224dd15ff504c1f16c43aff03e216b82a7');
+    assert.equal(await DataPackage.hash(fileURLToPath(new URL('./packages/QuickPic.zip', import.meta.url))), 'bd13db0f18ccb423833cc21c0678e0224dd15ff504c1f16c43aff03e216b82a7');
 
     assert.equal(pkg.version, '2');
     assert.ok(pkg.path);
@@ -255,7 +256,7 @@ test(`DataPackage CoT Parsing: addFile,getFile`, async () => {
     assert.equal(pkg.version, '2');
     assert.ok(pkg.path);
 
-    await pkg.addFile(fs.createReadStream(new URL('../package.json', import.meta.url).pathname), {
+    await pkg.addFile(fs.createReadStream(fileURLToPath(new URL('../package.json', import.meta.url))), {
         uid: '123',
         name: 'package.json'
     })
@@ -286,11 +287,11 @@ test(`DataPackage CoT Parsing: addFile,getFile`, async () => {
 });
 
 test(`DataPackage CoT Parsing: AttachmentInManifest.zip`, async () => {
-    const pkg = await DataPackage.parse(new URL('./packages/AttachmentInManifest.zip', import.meta.url).pathname, {
+    const pkg = await DataPackage.parse(fileURLToPath(new URL('./packages/AttachmentInManifest.zip', import.meta.url)), {
         cleanup: false
     });
 
-    assert.equal(await DataPackage.hash(new URL('./packages/AttachmentInManifest.zip', import.meta.url).pathname), '313127964ac117dfbe6d64bb8a0832182593348692df3b8f9f9448d9f91c289e');
+    assert.equal(await DataPackage.hash(fileURLToPath(new URL('./packages/AttachmentInManifest.zip', import.meta.url))), '313127964ac117dfbe6d64bb8a0832182593348692df3b8f9f9448d9f91c289e');
 
     assert.equal(pkg.version, '2');
     assert.ok(pkg.path);
@@ -339,11 +340,11 @@ test(`DataPackage CoT Parsing: AttachmentInManifest.zip`, async () => {
 });
 
 test(`DataPackage File Parsing: COMileposts.zip`, async () => {
-    const pkg = await DataPackage.parse(new URL('./packages/COMilePosts.zip', import.meta.url).pathname, {
+    const pkg = await DataPackage.parse(fileURLToPath(new URL('./packages/COMilePosts.zip', import.meta.url)), {
         cleanup: false
     });
 
-    assert.equal(await DataPackage.hash(new URL('./packages/COMilePosts.zip', import.meta.url).pathname), '118e6b6f4cd30c855606879263f6376ca8a6f9b1694dd38ac43868ecfbe46edb');
+    assert.equal(await DataPackage.hash(fileURLToPath(new URL('./packages/COMilePosts.zip', import.meta.url))), '118e6b6f4cd30c855606879263f6376ca8a6f9b1694dd38ac43868ecfbe46edb');
 
     assert.equal(pkg.version, '2');
     assert.ok(pkg.path);
@@ -381,12 +382,12 @@ test(`DataPackage File Parsing: COMileposts.zip`, async () => {
 });
 
 test(`DataPackage File Parsing: Iconset-FalconView.zip (strict: false)`, async () => {
-    const pkg = await DataPackage.parse(new URL('./packages/Iconset-FalconView.zip', import.meta.url).pathname, {
+    const pkg = await DataPackage.parse(fileURLToPath(new URL('./packages/Iconset-FalconView.zip', import.meta.url)), {
         strict: false,
         cleanup: false
     });
 
-    assert.equal(await DataPackage.hash(new URL('./packages/Iconset-FalconView.zip', import.meta.url).pathname), '53622c90841d2ef66b3b508412be0ecd33f90f1cd7887295ab0c3a31ee2e7315');
+    assert.equal(await DataPackage.hash(fileURLToPath(new URL('./packages/Iconset-FalconView.zip', import.meta.url))), '53622c90841d2ef66b3b508412be0ecd33f90f1cd7887295ab0c3a31ee2e7315');
 
     assert.equal(pkg.version, '2');
     assert.ok(pkg.path);
@@ -417,13 +418,13 @@ test(`DataPackage File Parsing: Iconset-FalconView.zip (strict: false)`, async (
 });
 
 test(`MissionArchive: Testing Export`, async () => {
-    const pkg = await DataPackage.parse(new URL('./packages/MissionArchive.zip', import.meta.url).pathname, {
+    const pkg = await DataPackage.parse(fileURLToPath(new URL('./packages/MissionArchive.zip', import.meta.url)), {
         strict: false,
         cleanup: false
     });
 
     assert.equal(
-        await DataPackage.hash(new URL('./packages/Iconset-FalconView.zip', import.meta.url).pathname),
+        await DataPackage.hash(fileURLToPath(new URL('./packages/Iconset-FalconView.zip', import.meta.url))),
         '53622c90841d2ef66b3b508412be0ecd33f90f1cd7887295ab0c3a31ee2e7315'
     );
 
