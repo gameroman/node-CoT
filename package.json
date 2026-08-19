@@ -30,7 +30,7 @@
         "node": ">= 22"
     },
     "dependencies": {
-        "@archiver/archiver": "https://pkg.pr.new/@archiver/archiver@2f370d9",
+        "@archiver/archiver": "https://pkg.pr.new/@archiver/archiver@504f376",
         "@openaddresses/batch-error": "^2.4.0",
         "@orbat-mapper/convert-symbology": "^1.0.2",
         "@sinclair/typebox": "^0.34.0",
