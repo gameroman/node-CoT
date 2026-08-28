@@ -4,6 +4,7 @@ import path from 'node:path'
 import { spawn } from 'node:child_process'
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 import { CoTParser, DataPackage } from '../index.js'
 
 interface CLIResult {
@@ -16,10 +17,10 @@ async function runCLI(args: string[]): Promise<CLIResult> {
     return await new Promise((resolve, reject) => {
         const child = spawn(process.execPath, [
             '--import', 'tsx',
-            new URL('../cli.ts', import.meta.url).pathname,
+            fileURLToPath(new URL('../cli.ts', import.meta.url)),
             ...args
         ], {
-            cwd: new URL('..', import.meta.url).pathname
+            cwd: fileURLToPath(new URL('..', import.meta.url))
         });
 
         let stdout = '';
@@ -113,7 +114,7 @@ test('cli package validate valid package', async () => {
     const result = await runCLI([
         'package',
         'validate',
-        new URL('./packages/QuickPic.zip', import.meta.url).pathname
+        fileURLToPath(new URL('./packages/QuickPic.zip', import.meta.url))
     ]);
 
     assert.equal(result.code, 0);
