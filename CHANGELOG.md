@@ -12,96 +12,100 @@
 
 ### Pending Fixed
 
-### v14.52.0 - 2025-08-11
+### v14.52.1 - 2026-08-28
+
+- :rocket: `pathName` => `fileURLToPathname` for better windows support
+
+### v14.52.0 - 2026-08-11
 
 - :tada: Add `CoTParser.from_xml_document()` for parsing multi-event XML documents (ie: the TAK Server Mission API CoT endpoint) - each event is parsed & validated individually and returned in `cots`, with unparseable events collected in `invalid` as `{ error, event }` (the raw unmutated xml-js event) so a single poisoned CoT doesn't prevent valid CoTs from being returned
 - :white_check_mark: `from_xml_document` coverage: mixed valid/poisoned documents, ordering, bare `<event>` root, XML declaration, boolean attr normalization, pristine invalid events, Flow-Tag absence & GeoJSON conversion of parsed CoTs
 
-### v14.51.0 - 2025-08-05
+### v14.51.0 - 2026-08-05
 
 - :bug: The SIDC is now emitted on both the `__milsym` & `__milicon` details - the takkernel `MilSymDetailHandler` registers `__milsym` only, while newer clients read `__milicon` (ATAK-20119), so MIL-STD symbols previously failed to render depending on the receiving client's version
 - :tada: Add `Type2525.cotTypeFromNumericSIDC()` - returns the most specific CoT Type a numeric SIDC can express (`a-f-G-U-C-I` instead of `a-f-G`), preserving the Type derived icon fallback for clients that can't resolve the SIDC. A numeric SIDC on the GeoJSON `type` property now uses it
 - :bug: `Type2525.to2525D()` short codes (types with no Function ID) declared an undefined `12` SIDC Version field, which clients can't map to a symbology provider - they now declare `10` (2525D) like converted codes do
 
-### v14.50.0 - 2025-08-01
+### v14.50.0 - 2026-08-01
 
 - :bug: MilIcon augmentation no longer clobbers an existing `__milicon` detail with the generic SIDC derived from the CoT type
 
-### v14.49.0 - 2025-07-29
+### v14.49.0 - 2026-07-29
 
 - :tada: Add `event` Link Attribute for marking a CoT as the projection of a CloudTAK Core Event
 
-### v14.48.0 - 2025-07-23
+### v14.48.0 - 2026-07-23
 
 - :rocket: Update normalize function to allow 2525E => type
 
-### v14.47.0 - 2025-07-21
+### v14.47.0 - 2026-07-21
 
 - :tada: Allow a numeric 2525D/2525E SIDC to be provided on the GeoJSON `type` property - it is mapped to a basic CoT Atom type (`a-<affiliation>-<battle dimension>`) and the SIDC is placed in the `milicon` property
 
-### v14.46.0 - 2025-07-21
+### v14.46.0 - 2026-07-21
 
 - :rocket: Differentiate between force delete and force stale
 
-### v14.45.1 - 2025-07-17
+### v14.45.1 - 2026-07-17
 
 - :bug: Make uid attributes optional
 
-### v14.45.0 - 2025-07-14
+### v14.45.0 - 2026-07-14
 
 - :arrow_up: Remove the need for `uuid` by using `crypto.randomUUID()` which is available in Node 18+
 
-### v14.44.3 - 2025-07-07
+### v14.44.3 - 2026-07-07
 
 - :bug: Hanle `hae` as `NaN`
 
-### v14.44.2 - 2025-07-07
+### v14.44.2 - 2026-07-07
 
 - :arrow_up: Update Core Deps
 
-### v14.44.1 - 2025-07-05
+### v14.44.1 - 2026-07-05
 
 - :rocket: Make Chat.ID Optional
 
-### v14.44.0 - 2025-07-03
+### v14.44.0 - 2026-07-03
 
 - :tada: Add support for parsing Chat Receipt CoTs (`b-t-f-d`, `b-t-f-r`, `b-t-f-p`, `b-t-f-s`) - the ATAK style `__chatreceipt` detail is now included in the `Detail` schema and populates `properties.chat` in `to_geojson`
 - :tada: Add `DirectChatReceipt` builder for generating Chat Receipt CoTs
 - :tada: Add `CoT.is_chat_receipt()` helper
 - :white_check_mark: Add tests for ATAK (`__chatreceipt`) & WinTAK (`__chat`) style Chat Receipts
 
-### v14.43.2 - 2025-07-03
+### v14.43.2 - 2026-07-03
 
 - :arrow_up: Update protobuf
 
-### v14.43.1 - 2025-07-02
+### v14.43.1 - 2026-07-02
 
 - :rocket: Include error logging if the XML is invalid
 
-### v14.43.0 - 2025-07-01
+### v14.43.0 - 2026-07-01
 
 - :arrow_up: Migrate to `@tak-ps/xml-js` which is a fill TypeScript port of `xml-js`
 - :bug: Fix attribute escaping in `xml-js` to ensure callsigns with `&` are properly escaped
 
-### v14.42.1 - 2025-06-25
+### v14.42.1 - 2026-06-25
 
 - :arrow_up: Remove `rimraf` now that `node.fsp.rm` is available
 - :arrow_up: Update Core Deps
 
-### v14.42.0 - 2025-06-24
+### v14.42.0 - 2026-06-24
 
 - :bug: Ensure empty track.slope doesn't result in a parsing error
 
-### v14.41.0 - 2025-06-13
+### v14.41.0 - 2026-06-13
 
 - :bug: Fix Opacity bug in Polygon Features created via ATAK
 - :bug: Fix ellipse orientation in ATAK created Ellipse Features
 
-### v14.40.1 - 2025-06-11
+### v14.40.1 - 2026-06-11
 
 - :arrow_up: Update Core Deps
 
-### v14.40.0 - 2025-06-11
+### v14.40.0 - 2027-06-11
 
 - :rocket: Introduce BiDirectional Support for CBRN Data
 - :rocket: Introdice BiDirectional Support for `spatial` attribute - Closes: https://github.com/dfpc-coe/node-CoT/issues/130
@@ -146,107 +150,107 @@
 
 - :rocket: `creator.callsign` property is optional
 
-### v14.32.0 - 2025-04-06
+### v14.32.0 - 2026-04-06
 
 - :arrow_up: Update to TypeScript@6
 
-### v14.31.0 - 2025-03-26
+### v14.31.0 - 2026-03-26
 
 - :tada: Introduce basic validation CLI
 - :rocket: Normalize `False`/`True` boolean values to actual booleans when parsing XML
 
-### v14.30.1 - 2025-03-18
+### v14.30.1 - 2026-03-18
 
 - :tada: Retain Non-TAK Server Flow Tags
 
-### v14.30.0 - 2025-03-18
+### v14.30.0 - 2026-03-18
 
 - :tada: Add the ability to reset flow tags
 
-### v14.29.0 - 2025-03-12
+### v14.29.0 - 2026-03-12
 
 - :rocket: Add MVP for MissionChat builder
 
-### v14.28.1 - 2025-03-10
+### v14.28.1 - 2026-03-10
 
 - :arrow_up: Update Core Deps
 - :white_check_mark: Add test for XML Escaped Characters
 
-### v14.28.0 - 2025-02-27
+### v14.28.0 - 2026-02-27
 
 - :rocket: If a `LineString` feature is provided that happens to have the same first and end coordinate, TAK will treat it as a polygon as the U-D type doesn't differentiate
            Set fillOpacity: 0 for LineString features to ensure they at least look correct. When it is parsed back into GeoJSON it will "become" a polygon which will need to 
            be handled by downstream users if they want to maintain the original geometry type
 
-### v14.27.0 - 2025-02-26
+### v14.27.0 - 2026-02-26
 
 - :tada: Add bi-directional parsing of `marti_archive` tag in `dest` section of CoT messages
 
-### v14.26.0 - 2025-02-26
+### v14.26.0 - 2026-02-26
 
 - :tada: Add support for Marti.archive=<boolean> which in TAK server 5.7 will disable archiving in the `cot_router` table
 
-### v14.25.0 - 2025-02-26
+### v14.25.0 - 2026-02-26
 
 - :rocket: Make Geofence Types Boolean where possible
 
-### v14.24.3 - 2025-02-20
+### v14.24.3 - 2026-02-20
 
 - :rocket: Update to_geojson conversion of missionChanges
 
-### v14.24.2 - 2025-02-20
+### v14.24.2 - 2026-02-20
 
 - :rocket: Set `tool` as optional property in MissionChange contentResource
 
-### v14.24.1 - 2025-02-20
+### v14.24.1 - 2026-02-20
 
 - :rocket: Set `filename` as optional property in MissionChange contentResource
 
-### v14.24.0 - 2025-02-19
+### v14.24.0 - 2026-02-19
 
 - :tada: Update CoT and GeoJSON schemas to support the contentResource type on MissionChange objects
 
-### v14.23.2 - 2025-02-13
+### v14.23.2 - 2026-02-13
 
 - :bug: Ensure Fill Color attribute is on all Polygon types
 
-### v14.23.1 - 2025-02-13
+### v14.23.1 - 2026-02-13
 
 - :bug: Fix color issue surfaced by KML Parsing fixes in 14.23
 
-### v14.23.0 - 2025-02-13
+### v14.23.0 - 2026-02-13
 
 - :bug: Fix transparency parsing and writing of KML Alpha values
 
-### v14.22.1 - 2025-02-07
+### v14.22.1 - 2026-02-07
 
 - :bug: Fix test input for isFederatedChange
 
-### v14.22.0 - 2025-02-07
+### v14.22.0 - 2026-02-07
 
 - :rocket: Change isFederatedChange from `String` to `Boolean` to match API Definition
 
-### v14.21.0 - 2025-02-04
+### v14.21.0 - 2026-02-04
 
 - :rocket: Include more properties from MOBAC Basemap.xml
 
-### v14.20.0 - 2025-02-03
+### v14.20.0 - 2026-02-03
 
 - :rocket: Permissive changes to UID Schema
 
-### v14.19.0 - 2025-01-28
+### v14.19.0 - 2026-01-28
 
 - :rocket: Update MissionChange Types
 
-### v14.18.4 - 2025-01-02
+### v14.18.4 - 2026-01-02
 
 - :arrow_up: Update Core Deps
 
-### v14.18.3 - 2025-01-02
+### v14.18.3 - 2026-01-02
 
 - :bug: Fixing GH Actions Trusted Publishing
 
-### v14.18.2 - 2025-01-02
+### v14.18.2 - 2026-01-02
 
 - :bug: Ensure normalize step never produces center with > 3 coordinates
 
